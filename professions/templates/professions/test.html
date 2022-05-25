@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Untitled</title>
+  <meta charset="utf-8">
+  <script>
+   function change()
+  {
+    var tr1,tr2;
+    if(!(tr1=document.getElementsByTagName('tr')[0])||!(tr2=document.getElementsByTagName('tr')[1]))
+        return;
+    tr2.parentNode.insertBefore(tr2,tr1);
+  }
+  </script>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>6</td>
+    </tr>
+  </table>
+  <form>
+    <input name="" type="button" value="go" onclick="change()">
+  </form>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+ <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<form method="post">
+{% csrf_token %}
+  <div class="container">
+      <div class="row">
+        <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+          <div class="text-center mt-5 b-1">
+              <h1 class="h3 mb-3 font-weight-normal">Добро пожаловать</h1>
+              <h5 class="h15 mb-3 font-weight-light">Войдите чтобы управлять</h5>
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Войти</button>
+              <div class="mt-4 text-center"><p>Нет аккаунта? <a href="{% url "register" %}">Зарегистрируйтесь!</a></p></div>
+
+          </div>
+      </div>
+  </div>
+</form>
+</body>
+</html>
