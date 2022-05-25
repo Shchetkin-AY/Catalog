@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.views.generic import CreateView, UpdateView, TemplateView, ListView
+from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
 
 
 from professions.models import Direction, Profile, User, UserDirect, UserProf
@@ -38,8 +38,11 @@ class MainView(LoginRequiredMixin, TemplateView):
         return context
 
 
+
+
 class Favorites(LoginRequiredMixin, TemplateView):
     template_name = 'professions/test.html'
+    model = Direction
 
 
     def get_context_data(self, *, object_list=None, **kwargs):

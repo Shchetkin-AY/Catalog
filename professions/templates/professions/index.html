@@ -30,17 +30,17 @@
          <form method="post">
          {% csrf_token %}
          <div class="layer_1">
-             <script><div class="select-container" direction_list={{ JSON.stringify(direction_list) }}></script>
+             <div class="select-container">
                  {% for direction in direction_list %}
                      <h3 class="">{{ direction.pk }}. {{ direction.title }}</h3>
                      {% for profile in profile_list %}
                          <ul class="">{% if profile.direct_id == direction.pk %} - {{ profile.name }}
-                             <div class="text-right">
-                                 <button type="submit" class="btn btn-sm btn-primary">Добавить</button>
-                             </div>
                          {% endif %}
                          </ul>
                      {% endfor %}
+                     <div class="text-">
+                     <button type="submit" class="btn btn-sm btn-primary">Добавить</button>
+                     </div>
                  {% endfor %}
              </div>
          </div>
