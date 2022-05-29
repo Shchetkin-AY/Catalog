@@ -1,13 +1,14 @@
 from django.shortcuts import redirect
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
+from django.views.generic import CreateView, FormView
+
+from professions.models import Direction, Profile, UserDirect, UserProf
+from professions.forms import UserCreationForm, UserDirectionForm
 
 
-from professions.models import Direction, Profile, User, UserDirect, UserProf
-from professions.forms import LoginUserForm, UserCreationForm
-
-
+# страница регистрации
 class RegisterUserView(CreateView):
     template_name = 'professions/registr.html'
     form_class = UserCreationForm
@@ -19,55 +20,44 @@ class RegisterUserView(CreateView):
             return redirect('login')
         return super(RegisterUserView, self).form_valid(form)
 
+
 # страница аутентификации пользователя
 class LoginUserView(LoginView):
     template_name = 'professions/login.html'
-    next_page = 'content'
+    next_page = 'catalog'
 
 
-class MainView(LoginRequiredMixin, TemplateView):
-    template_name = 'professions/index.html'
+# страница каталога
+class Catalog(LoginRequiredMixin, FormView):
+    template_name = 'professions/catalog.html'
     model = Direction
+    form_class = UserDirectionForm
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(MainView, self).get_context_data(**kwargs)
-        context['direction_list'] = Direction.objects.all()
-        context['profile_list'] = Profile.objects.all()
-        context['user_dir'] = UserDirect.objects.filter(user_id=self.request.user.id)
-        context['user_prof'] = UserProf.objects.filter(user_id=self.request.user.id)
-        return context
-
-
-
-
-class Favorites(LoginRequiredMixin, TemplateView):
-    template_name = 'professions/test.html'
-    model = Direction
-
-
+    # передаем данные в шаблон каталога
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['direction_list'] = Direction.objects.all()
         context['profile_list'] = Profile.objects.all()
-        context['user_dir'] = UserDirect.objects.filter(user_id=self.request.user.id)
-        context['user_prof'] = UserProf.objects.filter(user_id=self.request.user.id)
+        context['user_dir'] = UserDirect.objects.filter(user_id=self.request.user.id).order_by('directionIndex')
+        context['user_prof'] = UserProf.objects.filter(user_id=self.request.user.id).order_by('profileIndex')
         return context
 
-
+    # НЕ получает данные от catalog ajax
     def post(self, request, *args, **kwargs):
-        if not request.session.get('favorites'):
-            request.session['favorites'] = list()
-        else:
-            request.session['favorites'] = list(request.session['favorites'])
+        if request.method == 'POST':
+            form = request.POST.get('data')
+            post = UserDirect(direct_id=1, user_id=request.user.id)
+            post.save()
+            return redirect('catalog')
 
-        item_exist = next((item for item in request.session['favorites'] if item ['type'] == request.POST.get('type') and item['id'] == id), False)
+    # как вариант попробовать
 
-        add_data ={
-            'type': request.POST.get('type'),
-            'id': id,
-        }
-
-        if not item_exist:
-            request.session['favorites'].append(add_data)
-            request.session.modified = True
-        return redirect(request.POST.get('favorites'))
+    #     form = self.form_class(request.POST)
+    #
+    #     if form.is_valid():
+    #         direction = form.save(commit=False)
+    #         direction.user_id = request.user.id
+    #         direction.direction_id = request.pk
+    #         direction.save()
+    #         return redirect('favorites')
+    #     return self.render_to_response(self.get_context_data(form=form))

@@ -18,14 +18,13 @@ from django.urls import path
 
 from django.contrib.auth.views import LogoutView
 
-from professions.views import MainView, LoginUserView, RegisterUserView, Favorites
+from professions.views import Catalog, LoginUserView, RegisterUserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', RegisterUserView.as_view(), name='register'),
     path('', LoginUserView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('content/', MainView.as_view(), name='content'),
-    path('favorites/', Favorites.as_view(), name='favorites'),
+    path('favorites/', Catalog.as_view(), name='catalog'),
 
 ]

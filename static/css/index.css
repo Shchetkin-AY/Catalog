@@ -1,0 +1,92 @@
+.columns {
+    display: flex;
+    justify-content: space-evenly;
+   }
+   .select-container,
+   .selected-directions-container {
+    position: relative;
+    overflow: scroll; /* Добавляем полосы прокрутки */
+    width: 500px; /* Ширина блока */
+    height: 300px; /* Высота блока */
+    padding: 10px; /* Поля вокруг текста */
+    border: solid 1px black; /* Параметры рамки */
+   }
+   .direction-arrows {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+   }
+   .arrow-top {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    margin-bottom: 3px;
+    cursor: pointer;
+   }
+   .arrow-bottom {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    margin-top: 3px;
+    cursor: pointer;
+   }
+   .direction-container {
+    margin-bottom: 10px;
+   }
+   .direction-header,
+   .direction-header-selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-weight: 700;
+    padding: 5px 10px;
+    border: solid 1px #eee;
+    height: 30px;
+   }
+   .direction-header-selected {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+   }
+   .profile-container {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    font-weight: 500;
+    margin-left: 20px;
+    padding: 2px 0;
+    border-bottom: solid 1px #eee;
+    border-right: solid 1px #eee;
+   }
+   .layer_2{
+    position: absolute ;
+    overflow: scroll;
+    width: 500px;
+    height: 300px;
+    padding: 5px;
+    border: solid 1px black;
+   }
+   .sortable-ul {
+	list-style-type: none;
+	margin: 10px auto;
+	padding: 0;
+	width: 480px;
+}
+.sortable-ul ul {
+	list-style-type: none;
+	margin: 0 0 0 30px;
+	padding: 0;
+}
+.sortable-ul div {
+	margin: 4px 0;
+	padding: 5px 10px;
+	font-size: 16px;
+	background: #eee;
+	border: 1px solid #e0e0e0;
+	border-left: 30px solid #e0e0e0;
+}

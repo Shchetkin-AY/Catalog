@@ -1,0 +1,244 @@
+{% load static %}
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="columns">
+    <div class="select-container"></div>
+    <form name="form" method="post" id="post-form" action="{% url 'catalog' %}">{% csrf_token %}
+        <div class="selected-directions-container">
+            {% for my_dir in user_dir %}{{ my_dir.direct.title }}{{ my_dir.direct_id.title }}{% endfor %}</div>
+        <p><button class="save-button" name="save" type="submit">Сохранить</button></p> <p><button type="reset" name="del">Очистить</button></p>
+    </form>
+
+</div>
+</body>
+
+{# скрипт рендера окон, каталога, выбора и перестановок #}
+<script>
+
+    const directions = [{% for direction in direction_list %}{'pk': '{{direction.pk}}', 'title': '{{ direction.title }}'
+            },{% endfor %}];
+
+    const profiles = [{% for profiles in profile_list %}{'direct_id': '{{ profiles.direct_id }}',
+            'name': '{{ profiles.name }}'},{% endfor %}];
+
+
+    const currentDirections = directions.map((direction) => {
+        return {
+            ...direction,
+            profiles: profiles.filter(profile => profile.direct_id === direction.pk)
+        }
+    });
+
+    const selectedDirections = [];
+
+    const selectContainer = document.getElementsByClassName('select-container')[0];
+    const selectedDirectionsContainer = document.getElementsByClassName('selected-directions-container')[0];
+
+    const handleAddDirection = (direction) => {
+        if (!selectedDirections.find(({pk}) => pk === direction.pk)) {
+            selectedDirections.push(direction);
+            renderSelectedDiretions();
+        }
+    };
+
+    handleUpDirection = (currentIndex) => {
+        const currentDirection = selectedDirections.splice(currentIndex, 1)[0];
+        selectedDirections.splice(currentIndex - 1, 0, currentDirection);
+        renderSelectedDiretions();
+    };
+
+    handleDownDirection = (currentIndex) => {
+        const currentDirection = selectedDirections.splice(currentIndex, 1)[0];
+        selectedDirections.splice(currentIndex + 1, 0, currentDirection);
+        renderSelectedDiretions();
+    };
+
+    handleUpProfile = (directionIndex, profileIndex) => {
+        const currentProfiles = selectedDirections[directionIndex].profiles;
+
+        const currentProfile = currentProfiles.splice(profileIndex, 1)[0];
+        currentProfiles.splice(profileIndex - 1, 0, currentProfile);
+        renderSelectedDiretions();
+    };
+
+    handleDownProfile = (directionIndex, profileIndex) => {
+        const currentProfiles = selectedDirections[directionIndex].profiles;
+
+        const currentProfile = currentProfiles.splice(profileIndex, 1)[0];
+        currentProfiles.splice(profileIndex + 1, 0, currentProfile);
+        renderSelectedDiretions();
+
+    };
+
+    renderSelectedDiretions = () => {
+        selectedDirectionsContainer.innerHTML = '';
+        const selectedDirectionsCount = selectedDirections.length;
+
+        selectedDirections.forEach((direction, directionIndex) => {
+            const directionContainer = document.createElement('div');
+            directionContainer.className = 'direction-container';
+
+            const directionHeader = document.createElement('div');
+
+            directionHeader.className = 'direction-header-selected';
+            directionHeader.textContent = direction.title;
+
+            if (selectedDirectionsCount > 1) {
+                const directionArrowsContainer = document.createElement('div');
+                directionArrowsContainer.className = 'direction-arrows';
+
+                if (directionIndex && directionIndex !== selectedDirectionsCount) {
+                    const directionTopArrow = document.createElement('div');
+                    directionTopArrow.className = 'arrow-top';
+                    directionTopArrow.addEventListener('click', () => handleUpDirection(directionIndex));
+
+                    directionArrowsContainer.append(directionTopArrow);
+                }
+
+                if (directionIndex + 1 < selectedDirectionsCount) {
+                    const directionBottomArrow = document.createElement('div');
+                    directionBottomArrow.className = 'arrow-bottom';
+                    directionBottomArrow.addEventListener('click', () => handleDownDirection(directionIndex));
+
+                    directionArrowsContainer.append(directionBottomArrow);
+                }
+
+                directionHeader.append(directionArrowsContainer);
+            }
+
+            directionContainer.append(directionHeader);
+
+            const profilesContainer = document.createElement('div');
+            profilesContainer.className = 'profiles-container';
+
+            const profilesCount = direction.profiles.length;
+
+            direction.profiles.forEach((profile, profileIndex) => {
+                const profileContainer = document.createElement('div');
+                profileContainer.className = 'profile-container';
+                profileContainer.textContent = profile.name;
+
+                if (profilesCount > 1) {
+                    const profileArrowsContainer = document.createElement('div');
+                    profileArrowsContainer.className = 'direction-arrows';
+
+                    if (profileIndex && profileIndex !== profilesCount) {
+                        const directionTopArrow = document.createElement('div');
+                        directionTopArrow.className = 'arrow-top';
+                        directionTopArrow.addEventListener('click', () => handleUpProfile(directionIndex, profileIndex));
+
+                        profileArrowsContainer.append(directionTopArrow);
+                    }
+
+                    if (profileIndex + 1 < profilesCount) {
+                        const directionBottomArrow = document.createElement('div');
+                        directionBottomArrow.className = 'arrow-bottom';
+                        directionBottomArrow.addEventListener('click', () => handleDownProfile(directionIndex, profileIndex));
+
+                        profileArrowsContainer.append(directionBottomArrow);
+                    }
+
+                    profileContainer.append(profileArrowsContainer)
+                }
+
+                profilesContainer.append(profileContainer);
+            })
+
+            directionContainer.append(profilesContainer);
+            selectedDirectionsContainer.append(directionContainer);
+        })
+    };
+
+
+    currentDirections.forEach(direction => {
+        const directionContainer = document.createElement('div');
+        directionContainer.className = 'direction-container';
+
+        const directionHeader = document.createElement('div');
+
+        directionHeader.className = 'direction-header';
+        directionHeader.textContent = direction.title;
+
+        const appendButton = document.createElement('button');
+
+        appendButton.textContent = 'Добавить';
+        appendButton.addEventListener('click', () => handleAddDirection(direction));
+
+
+        directionHeader.append(appendButton);
+        directionContainer.append(directionHeader);
+
+        const profilesContainer = document.createElement('div');
+        profilesContainer.className = 'profiles-container';
+
+        direction.profiles.forEach(profile => {
+            const profileContainer = document.createElement('div');
+            profileContainer.className = 'profile-container';
+            profileContainer.textContent = profile.name;
+
+            profilesContainer.append(profileContainer);
+        })
+
+        directionContainer.append(profilesContainer);
+        selectContainer.append(directionContainer);
+
+    })
+    console.log(selectedDirections)
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        console.log(cookieValue)
+        return cookieValue;
+    }
+
+$(".select-container").on("submit", "#save", function () {
+    {#$(".save-button").click(function (event) {#}
+        var form = $(this)
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            dataType: 'html',
+            success: function () {
+                alert("Ура");
+            }
+        });
+        return false;
+
+})
+
+
+</script>
+</html>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>

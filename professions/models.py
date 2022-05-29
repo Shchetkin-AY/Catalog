@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
 
+# Модель Направлений
 class Direction(models.Model):
     title = models.CharField(max_length=100)
 
@@ -10,6 +10,7 @@ class Direction(models.Model):
         return f"{self.title}"
 
 
+# модель Профилей
 class Profile(models.Model):
     name = models.CharField(max_length=100)
     direct = models.ForeignKey(Direction, on_delete=models.CASCADE, related_name='direct')
@@ -18,12 +19,21 @@ class Profile(models.Model):
         return f"{self.name}"
 
 
+# модель выбранных пользователем Направлений
 class UserDirect(models.Model):
-    position = models.IntegerField(auto_created=True)
+    directionIndex = models.IntegerField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     direct = models.ForeignKey(Direction, on_delete=models.CASCADE, related_name='user_direct')
 
+    class Meta:
+        ordering = ['directionIndex']
+
+
+# модель выбранных Профилей
 class UserProf(models.Model):
-    position = models.IntegerField(auto_created=True)
+    position = models.IntegerField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='user_prof')
+    profileIndex = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='user_prof')
+
+    class Meta:
+        ordering = ['profileIndex']
