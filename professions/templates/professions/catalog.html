@@ -10,11 +10,11 @@
 </head>
 <body>
 <div class="columns">
-    <div class="select-container"></div>
+    <div class="select-container">Напрвления</div>
     <form name="form" method="post" id="post-form" action="{% url 'catalog' %}">{% csrf_token %}
         <div class="selected-directions-container">
-            {% for my_dir in user_dir %}{{ my_dir.direct.title }}{{ my_dir.direct_id.title }}{% endfor %}</div>
-        <p><button class="save-button" name="save" type="submit">Сохранить</button></p> <p><button type="reset" name="del">Очистить</button></p>
+            {% for my_dir in user_dir %}{{ my_dir.direct.title }}{% endfor %}</div>
+        <p><button class="save-button" name="save" type="submit">Сохранить</button></p>
     </form>
 
 </div>
@@ -23,11 +23,9 @@
 {# скрипт рендера окон, каталога, выбора и перестановок #}
 <script>
 
-    const directions = [{% for direction in direction_list %}{'pk': '{{direction.pk}}', 'title': '{{ direction.title }}'
-            },{% endfor %}];
+    const directions = [{% for direction in direction_list %}{'pk': '{{direction.pk}}', 'title': '{{ direction.title }}'},{% endfor %}];
 
-    const profiles = [{% for profiles in profile_list %}{'direct_id': '{{ profiles.direct_id }}',
-            'name': '{{ profiles.name }}'},{% endfor %}];
+    const profiles = [{% for profiles in profile_list %}{'direct_id': '{{ profiles.direct_id }}', 'name': '{{ profiles.name }}'},{% endfor %}];
 
 
     const currentDirections = directions.map((direction) => {

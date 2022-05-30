@@ -43,12 +43,12 @@ class Catalog(LoginRequiredMixin, FormView):
         return context
 
     # НЕ получает данные от catalog ajax
-    def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
-            form = request.POST.get('data')
-            post = UserDirect(direct_id=1, user_id=request.user.id)
-            post.save()
-            return redirect('catalog')
+    # def post(self, request, *args, **kwargs):
+    #     if request.method == 'POST':
+    #         form = request.POST.get('data')
+    #         post = UserDirect(direct_id=1, user_id=request.user.id)
+    #         post.save()
+    #         return redirect('catalog')
 
     # как вариант попробовать
 
